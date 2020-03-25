@@ -6,26 +6,31 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&display=swap" rel="stylesheet">
         <script src="https://use.fontawesome.com/8d5f05995f.js"></script>
         <link rel="stylesheet" href="main.css">
-        <link rel="stylesheet" href="main2.scss">
         <script src="main.js"></script>
         <title>Document</title>
     </head>
     <body>
-        <div class="header">
-            <div class="header-sidebar">
-                <h1>ToDo List</h1>
-                <div class="data">
-                    <i class="fa fa-calendar" aria-hidden="true"></i>
-                    <div id="date"></div>
+        <div class="content">
+            <div class="header">
+                <div class="header-sidebar">
+                    <h1>ToDo List</h1>
+                    <div class="data">
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                        <div id="date"></div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="todo-content">
-            <h2>My To Do List</h2>
-            <input type="text" id="js-add-input" class="add-input" placeholder="write here">
-            <button id="js-add-button" class="add-button">Add</button>
-            <ul id="js-todo-list" class="todo-list"></ul>
-            <button id="js-clear-button" class="clear-button">Clear all</button>
+            <div class="todo-content">
+                <div class="info-bar">
+                    <div id="tasks-counter"></div>
+                    <div id="js-clear-button" class="clear-button"><i class="close fa fa-trash-o" aria-hidden="true"></i>Clear all</div>
+                </div>
+                <ul id="js-todo-list" class="todo-list"></ul>
+                <div class="footer">
+                    <input type="text" id="js-add-input" class="add-input" placeholder="new task">
+                    <div id="js-add-button" class="add-button"><i class="fa fa-plus-circle" aria-hidden="true"></i></div>
+                </div>
+            </div>
         </div>
     </body>
 </html>
