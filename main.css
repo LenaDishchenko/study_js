@@ -1,0 +1,71 @@
+* {
+    box-sizing: border-box;
+}
+
+body,
+html {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.hidden {
+    display: none;
+}
+
+.header {
+    display: flex;
+    justify-content: flex-end;
+    overflow: hidden;
+    height: 300px;
+    width: 100%;
+    background-image: url(images/bg.jpg);
+    background-size: cover;
+}
+
+.header-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding-right: 16px;
+    width: 30%;
+    height: 100%;
+    color: #fff;
+    background-color: #333333a3;
+}
+
+.header-sidebar h1 {
+    margin: 0;
+    font-size: 60px;
+    font-weight: 300;
+}
+
+.data {
+    display: flex;
+    align-items: center;
+    margin: 16px 0;
+}
+
+.data i {
+    margin-right: 8px;
+}
+
+.todo-content {
+    max-width: 500px;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    padding: 16px;
+}
+
+.todo-list {
+    list-style: none;
+}
+
+.todo-list li.checked {
+    text-transform: capitalize;
+}

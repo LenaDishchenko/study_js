@@ -1,13 +1,31 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-    <meta charset="UTF-8" />
-    <script src="main.js"></script>
-</head>
-<body>
-
-    <p>Hello</p>
-
-</body>
-
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&display=swap" rel="stylesheet">
+        <script src="https://use.fontawesome.com/8d5f05995f.js"></script>
+        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="main2.scss">
+        <script src="main.js"></script>
+        <title>Document</title>
+    </head>
+    <body>
+        <div class="header">
+            <div class="header-sidebar">
+                <h1>ToDo List</h1>
+                <div class="data">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                    <div id="date"></div>
+                </div>
+            </div>
+        </div>
+        <div class="todo-content">
+            <h2>My To Do List</h2>
+            <input type="text" id="js-add-input" class="add-input" placeholder="write here">
+            <button id="js-add-button" class="add-button">Add</button>
+            <ul id="js-todo-list" class="todo-list"></ul>
+            <button id="js-clear-button" class="clear-button">Clear all</button>
+        </div>
+    </body>
 </html>
