@@ -46,21 +46,30 @@ window.onload = function () {
         console.log('test');
         // check item
         if (ev.target.tagName === 'SPAN') {
-            // ev.target.classList.toggle('checked');
             var id = ev.target.getAttribute('data-id');
-            for (var key in todoList) {
-                if (todoList[key].id == id) {
-                    if (todoList[key].check == true) {
-                        todoList[key].check = false;
-                        ev.target.classList.remove('checked');
-                    }
-                    else {
-                        todoList[key].check = true;
-                        ev.target.classList.add('checked');
-                    }
-                    localStorageUpdate();
-                }
-            }
+            todoList = todoList.filter(function (todo) {
+                return todo.id == id;
+            }).map(function (todo) {
+                todo.check = !todo.check;
+                ev.target.classList.toggle('checked');
+                localStorageUpdate();
+                return todo;
+            })
+            // for (var key in todoList) {
+            //     if (todoList[key].id == id) {
+            //         todoList[key].check = !todoList[key].check;
+            //         ev.target.classList.toggle('checked');
+            //         // if (todoList[key].check == true) {
+            //         //     todoList[key].check = false;
+            //         //     // ev.target.classList.remove('checked');
+            //         // }
+            //         // else {
+            //         //     todoList[key].check = true;
+            //         //     // ev.target.classList.add('checked');
+            //         // }
+            //         localStorageUpdate();
+            //     }
+            // }
             // debugger;
         }
         // delete item
