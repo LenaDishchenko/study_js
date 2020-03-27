@@ -47,36 +47,67 @@ window.onload = function () {
         // check item
         if (ev.target.tagName === 'SPAN') {
             var id = ev.target.getAttribute('data-id');
-            todoList = todoList.filter(function (todo) {
+            var onlyMatchingIds = function (todo) {
+                // if (todo.id == id) {
+                //     return true;
+                // }
+                // else {
+                //     return false;
+                // }
                 return todo.id == id;
-            }).map(function (todo) {
+            }
+            var toggleChecked = function (todo) {
                 todo.check = !todo.check;
                 ev.target.classList.toggle('checked');
                 localStorageUpdate();
                 return todo;
-            })
+            }
+            todoList = todoList.filter(onlyMatchingIds).map(toggleChecked);
+            // todoList = todoList.filter(function (todo) {
+            //     return todo.id == id;
+            // }).map(function (todo) {
+            //     todo.check = !todo.check;
+            //     ev.target.classList.toggle('checked');
+            //     localStorageUpdate();
+            //     return todo;
+            // })
             // for (var key in todoList) {
             //     if (todoList[key].id == id) {
-            //         todoList[key].check = !todoList[key].check;
-            //         ev.target.classList.toggle('checked');
-            //         // if (todoList[key].check == true) {
-            //         //     todoList[key].check = false;
-            //         //     // ev.target.classList.remove('checked');
+                //         todoList[key].check = !todoList[key].check;
+                //         ev.target.classList.toggle('checked');
+                //         // if (todoList[key].check == true) {
+                    //         //     todoList[key].check = false;
+                    //         //     // ev.target.classList.remove('checked');
             //         // }
             //         // else {
-            //         //     todoList[key].check = true;
-            //         //     // ev.target.classList.add('checked');
-            //         // }
-            //         localStorageUpdate();
-            //     }
-            // }
-            // debugger;
-        }
+                //         //     todoList[key].check = true;
+                //         //     // ev.target.classList.add('checked');
+                //         // }
+                //         localStorageUpdate();
+                //     }
+                // }
+                // debugger;
+            }
         // delete item
+        
         if (ev.target.tagName === 'I') {
-            console.log('test3');
-            ev.target.parentNode.classList.add("hidden");
+            var id = ev.target.parentNode.getAttribute('data-id');
+            var onlyMatchingIds = function (todo) {
+                return todo.id == id;
+            }
+            for (var key in todoList) {
+                if (todoList[key].id == id) {
+                    console.log('test-del');
+                    todoList.splice(key, 1);
+                    localStorageUpdate();
+                    out();
+                    debugger;
+                }
+            }
         }
+        // if (ev.target.tagName === 'I') {
+            //     ev.target.parentNode.classList.add("hidden");
+        // }
     }, false);
 
     // clear all list and localStorage update
@@ -92,10 +123,10 @@ window.onload = function () {
         var out = '';
         for (var key in todoList) {
             if (todoList[key].check == true) {
-                out += '<li><span class="checked" data-id="' + todoList[key].id + '">' + todoList[key].todo + '</span><i class="delete fa fa-trash-o" aria-hidden="true"></i>';
+                out += '<li data-id="' + todoList[key].id + '"><span class="checked" data-id="' + todoList[key].id + '">' + todoList[key].todo + '</span><i class="delete fa fa-trash-o" aria-hidden="true"></i>';
             }
             else {
-                out += '<li><span data-id="' + todoList[key].id + '">' + todoList[key].todo + '</span><i class="delete fa fa-trash-o" aria-hidden="true"></i>';
+                out += '<li data-id="' + todoList[key].id + '"><span data-id="' + todoList[key].id + '">' + todoList[key].todo + '</span><i class="delete fa fa-trash-o" aria-hidden="true"></i>';
             }
         }
         document.getElementById('js-todo-list').innerHTML = out;
