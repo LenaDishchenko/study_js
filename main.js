@@ -23,18 +23,16 @@ window.onload = function () {
 
     // add items to the list function
     document.getElementById('js-add-button').onclick = function (){
-        var d = document.getElementById('js-add-input').value;
-        if (d != "") {
-            var temp = {};
-            temp.id = Date.now();
-            temp.todo = d;
-            temp.check = false;
-            todoList.push(temp);
-            out();
-            localStorageUpdate();
-            itemsCounterUpdate();
+        var inputValue = document.getElementById('js-add-input').value;
+        if (inputValue != "") {
+            todoList.push({
+                id: Date.now(),
+                text: inputValue,
+                check: false
+            });
             document.getElementById('js-add-input').value = "";
             document.getElementById('js-add-input').focus();
+            refreshState();
         }
         else {
             alert('Input value is empty!');
@@ -43,71 +41,28 @@ window.onload = function () {
 
     var list = document.querySelector('ul');
     list.addEventListener('click', function(ev) {
-        console.log('test');
         // check item
+        var id = ev.target.parentNode.getAttribute('data-id');
         if (ev.target.tagName === 'SPAN') {
-            var id = ev.target.getAttribute('data-id');
-            var onlyMatchingIds = function (todo) {
-                // if (todo.id == id) {
-                //     return true;
-                // }
-                // else {
-                //     return false;
-                // }
-                return todo.id == id;
-            }
             var toggleChecked = function (todo) {
-                todo.check = !todo.check;
-                ev.target.classList.toggle('checked');
-                localStorageUpdate();
-                return todo;
-            }
-            todoList = todoList.filter(onlyMatchingIds).map(toggleChecked);
-            // todoList = todoList.filter(function (todo) {
-            //     return todo.id == id;
-            // }).map(function (todo) {
-            //     todo.check = !todo.check;
-            //     ev.target.classList.toggle('checked');
-            //     localStorageUpdate();
-            //     return todo;
-            // })
-            // for (var key in todoList) {
-            //     if (todoList[key].id == id) {
-                //         todoList[key].check = !todoList[key].check;
-                //         ev.target.classList.toggle('checked');
-                //         // if (todoList[key].check == true) {
-                    //         //     todoList[key].check = false;
-                    //         //     // ev.target.classList.remove('checked');
-            //         // }
-            //         // else {
-                //         //     todoList[key].check = true;
-                //         //     // ev.target.classList.add('checked');
-                //         // }
-                //         localStorageUpdate();
-                //     }
-                // }
-                // debugger;
-            }
-        // delete item
-        
-        if (ev.target.tagName === 'I') {
-            var id = ev.target.parentNode.getAttribute('data-id');
-            var onlyMatchingIds = function (todo) {
-                return todo.id == id;
-            }
-            for (var key in todoList) {
-                if (todoList[key].id == id) {
-                    console.log('test-del');
-                    todoList.splice(key, 1);
-                    localStorageUpdate();
-                    out();
-                    debugger;
+                if (todo.id == id) {
+                    todo.check = !todo.check;
+                    ev.target.classList.toggle('checked');
                 }
+                return todo;            
             }
+            todoList = todoList.map(toggleChecked);
+            refreshState();
         }
-        // if (ev.target.tagName === 'I') {
-            //     ev.target.parentNode.classList.add("hidden");
-        // }
+        
+        // delete item
+        if (ev.target.tagName === 'I') {
+            var onlyMatchingIds = function (todo) {
+                return todo.id != id;
+            }
+            todoList = todoList.filter(onlyMatchingIds);
+            refreshState();
+        }
     }, false);
 
     // clear all list and localStorage update
@@ -122,12 +77,7 @@ window.onload = function () {
     function out() {
         var out = '';
         for (var key in todoList) {
-            if (todoList[key].check == true) {
-                out += '<li data-id="' + todoList[key].id + '"><span class="checked" data-id="' + todoList[key].id + '">' + todoList[key].todo + '</span><i class="delete fa fa-trash-o" aria-hidden="true"></i>';
-            }
-            else {
-                out += '<li data-id="' + todoList[key].id + '"><span data-id="' + todoList[key].id + '">' + todoList[key].todo + '</span><i class="delete fa fa-trash-o" aria-hidden="true"></i>';
-            }
+            out += `<li data-id="${todoList[key].id}"><span ${todoList[key].check ? "class='checked'" : ""}>${todoList[key].text}</span><i class="delete fa fa-trash-o" aria-hidden="true"></i>`
         }
         document.getElementById('js-todo-list').innerHTML = out;
     };
@@ -135,8 +85,14 @@ window.onload = function () {
     function itemsCounterUpdate() {
         tasksCounterElement.innerHTML = todoList.length + ' tasks';
     };
-    // // localStorage update
+    // localStorage update
     function localStorageUpdate() {
         localStorage.setItem('todo', JSON.stringify(todoList));
+    };
+    // refreshState
+    function refreshState() {
+        localStorageUpdate();
+        itemsCounterUpdate();
+        out();
     };
 };

@@ -14,10 +14,6 @@ html {
     color: #333;
 }
 
-.hidden {
-    display: none!important;
-}
-
 .content {
     display: flex;
     flex-direction: column;
