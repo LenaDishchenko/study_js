@@ -11,15 +11,14 @@ window.onload = function () {
     //todoList array creation
     var todoList = [];
 
+    // items quantity output
+    let tasksCounterElement = document.getElementById('tasks-counter');
+
     //all items from localStorage output
     if (localStorage.getItem('todo') != this.undefined) {
         todoList = JSON.parse(localStorage.getItem('todo'));
         out();
     }
-
-    // items quantity output
-    let tasksCounterElement = document.getElementById('tasks-counter');
-    itemsCounterUpdate();
 
     // add items to the list function
     document.getElementById('js-add-button').onclick = function (){
@@ -28,7 +27,8 @@ window.onload = function () {
             todoList.push({
                 id: Date.now(),
                 text: inputValue,
-                check: false
+                check: false,
+                delete: false
             });
             document.getElementById('js-add-input').value = "";
             document.getElementById('js-add-input').focus();
@@ -56,12 +56,19 @@ window.onload = function () {
         }
         
         // delete item
-        if (ev.target.tagName === 'I') {
+        if (ev.target.classList.contains('action-icon')) {
             var onlyMatchingIds = function (todo) {
                 return todo.id != id;
             }
-            todoList = todoList.filter(onlyMatchingIds);
+            var toggleDeleted = function (todo) {
+                if (todo.id == id) {
+                    todo.delete = true;
+                }
+                return todo;            
+            }
+            todoList = todoList.map(toggleDeleted);
             refreshState();
+            debugger;
         }
     }, false);
 
@@ -70,29 +77,38 @@ window.onload = function () {
         localStorage.removeItem('todo');
         document.getElementById('js-todo-list').innerHTML = "";
         todoList = [];
-        itemsCounterUpdate();
+        refreshState();
     };
 
     // new items output function
     function out() {
-        var out = '';
-        for (var key in todoList) {
-            out += `<li data-id="${todoList[key].id}"><span ${todoList[key].check ? "class='checked'" : ""}>${todoList[key].text}</span><i class="delete fa fa-trash-o" aria-hidden="true"></i>`
+        var actveOutput = '';
+        var deletedOutput = '';
+        var activeTodoList = todoList.filter(function (todo) {
+            return !todo.delete;
+        });
+        var deletedTodoList = todoList.filter(function (todo) {
+            return todo.delete;
+        });
+        for (var key in activeTodoList) {
+            actveOutput += `<li data-id="${activeTodoList[key].id}"><span ${activeTodoList[key].check ? "class='checked'" : ""}>${activeTodoList[key].text}</span><i class="action-icon fa fa-trash-o" aria-hidden="true"></i>`
         }
-        document.getElementById('js-todo-list').innerHTML = out;
+        for (var key in deletedTodoList) {
+            deletedOutput += `<li data-id="${deletedTodoList[key].id}"><span ${deletedTodoList[key].check ? "class='checked'" : ""}>${deletedTodoList[key].text}</span><i class="action-icon fa fa-undo" aria-hidden="true"></i>`
+        }
+        tasksCounterElement.innerHTML = activeTodoList.length + ' tasks';
+        document.getElementById('js-active-todo-list').innerHTML = actveOutput;
+        document.getElementById('js-deleted-todo-list').innerHTML = deletedOutput;
     };
-    // items quantity update
-    function itemsCounterUpdate() {
-        tasksCounterElement.innerHTML = todoList.length + ' tasks';
-    };
+
     // localStorage update
     function localStorageUpdate() {
         localStorage.setItem('todo', JSON.stringify(todoList));
     };
+
     // refreshState
     function refreshState() {
         localStorageUpdate();
-        itemsCounterUpdate();
         out();
     };
 };
