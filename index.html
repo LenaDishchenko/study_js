@@ -10,26 +10,42 @@
         <title>Document</title>
     </head>
     <body>
-        <div class="content">
-            <div class="header">
-                <div class="header-sidebar">
-                    <h1>ToDo List</h1>
-                    <div class="data">
-                        <i class="fa fa-calendar" aria-hidden="true"></i>
-                        <div id="date"></div>
+        <div class="wrapper">
+            <div class="menu">
+                <div class="menu-item" id="tasks-list-button">
+                    <span>Current tasks</span>
+                    <div id="tasks-counter"></div>
+                </div>
+                <div class="menu-item" id="tasks-list-deleted-button">
+                    <span>Deleted tasks</span>
+                    <div id="tasks-counter-deleted"></div>
+                </div>
+                <div class="menu-item">
+                    <input type="text" id="tasks-list-add-input" class="add-input" placeholder="new list">
+                    <span id="tasks-list-add-button">add +</span>
+                </div>
+                <div id="js-munu"></div>
+            </div>
+            <div class="content">
+                <div class="header">
+                    <div class="header-sidebar">
+                        <h1>ToDo List</h1>
+                        <div class="data">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            <div id="date"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="todo-content">
-                <div class="info-bar">
-                    <div id="tasks-counter"></div>
-                    <div id="js-clear-button" class="clear-button"><i class="close fa fa-trash-o" aria-hidden="true"></i>Clear all</div>
-                </div>
-                <ul id="js-active-todo-list" class="todo-list"></ul>
-                <ul id="js-deleted-todo-list" class="todo-list"></ul>
-                <div class="footer">
-                    <input type="text" id="js-add-input" class="add-input" placeholder="new task">
-                    <div id="js-add-button" class="add-button"><i class="fa fa-plus-circle" aria-hidden="true"></i></div>
+                <div class="todo-content" id="tasks-list">
+                    <div class="info-bar">
+                        <div id="js-clear-button" class="clear-button"><i class="close fa fa-trash-o" aria-hidden="true"></i>Clear all</div>
+                    </div>
+                    <ul id="js-deleted-todo-list" class="todo-list hidden"></ul>
+                    <ul id="js-active-todo-list" class="todo-list"></ul>
+                    <div class="footer">
+                        <input type="text" id="js-add-input" class="add-input" placeholder="new task">
+                        <div id="js-add-button" class="add-button"><i class="fa fa-plus-circle" aria-hidden="true"></i></div>
+                    </div>
                 </div>
             </div>
         </div>
