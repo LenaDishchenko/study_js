@@ -36,6 +36,10 @@ html {
     cursor: pointer;
 }
 
+.menu-item.current {
+    color: red;
+}
+
 .content {
     display: flex;
     flex-direction: column;

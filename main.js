@@ -8,23 +8,23 @@ window.onload = function () {
     let selectElement = document.getElementById('date');
     selectElement.innerHTML = formatDate;
 
-    //todoList array creation
-    var todoList = [];
-    var todoLists = [];
-
+    var todos = [];
+    var lists = [];
+    var currentListId;
     // items quantity output
     let tasksCounterElement = document.getElementById('tasks-counter');
     let tasksCounterElementDeleted = document.getElementById('tasks-counter-deleted');
+    let currentListName = document.getElementById('curren-list-name');
 
     //all items from localStorage output
     if (localStorage.getItem('todos') != this.undefined) {
-        todoList = JSON.parse(localStorage.getItem('todos'));
+        todos = JSON.parse(localStorage.getItem('todos'));
         out();
     }
 
     //all items from localStorage output
     if (localStorage.getItem('lists') != this.undefined) {
-        todoLists = JSON.parse(localStorage.getItem('lists'));
+        lists = JSON.parse(localStorage.getItem('lists'));
         outMenuItems();
     }
 
@@ -32,7 +32,7 @@ window.onload = function () {
     document.getElementById('js-add-button').onclick = function (){
         var inputValue = document.getElementById('js-add-input').value;
         if (inputValue != "") {
-            todoList.push({
+            todos.push({
                 id: Date.now(),
                 text: inputValue,
                 check: false,
@@ -51,17 +51,17 @@ window.onload = function () {
     document.getElementById('tasks-list-add-button').onclick = function (){
         var inputValue = document.getElementById('tasks-list-add-input').value;
         if (inputValue != "") {
-            todoLists.push({
+            lists.push({
                 id: Date.now(),
                 name: inputValue,
-                list: todoList,
+                todos: [],
             });
         }
         else {
             alert('Input value is empty!');
         }
-        document.getElementById('js-add-input').value = "";
-        document.getElementById('js-add-input').focus();
+        document.getElementById('tasks-list-add-input').value = "";
+        document.getElementById('tasks-list-add-input').focus();
         refreshState();
     };
 
@@ -77,7 +77,7 @@ window.onload = function () {
                 }
                 return todo;            
             }
-            todoList = todoList.map(toggleChecked);
+            todos = todos.map(toggleChecked);
             refreshState();
         }
         // delete item
@@ -88,7 +88,7 @@ window.onload = function () {
                 }
                 return todo;            
             }
-            todoList = todoList.map(deleteItem);
+            todos = todos.map(deleteItem);
             refreshState();
         }
     }, false);
@@ -104,7 +104,7 @@ window.onload = function () {
                 }
                 return todo;            
             }
-            todoList = todoList.map(restoreItem);
+            todos = todos.map(restoreItem);
             refreshState();
         }
     }, false);
@@ -113,7 +113,7 @@ window.onload = function () {
     document.getElementById('js-clear-button').onclick = function (){
         localStorage.removeItem('lists');
         document.getElementById('js-active-todo-list').innerHTML = "";
-        todoList = [];
+        todos = [];
         refreshState();
     };
 
@@ -121,28 +121,29 @@ window.onload = function () {
     function out() {
         var actveOutput = '';
         var deletedOutput = '';
-        var activeTodoList = todoList.filter(function (todo) {
+        var activeTodos = todos.filter(function (todo) {
             return !todo.delete;
         });
-        var deletedTodoList = todoList.filter(function (todo) {
+        var deletedTodos = todos.filter(function (todo) {
             return todo.delete;
         });
-        for (var key in activeTodoList) {
-            actveOutput += `<li data-id="${activeTodoList[key].id}"><span ${activeTodoList[key].check ? "class='checked'" : ""}>${activeTodoList[key].text}</span><i class="action-icon fa fa-trash-o" aria-hidden="true"></i>`
+        for (var key in activeTodos) {
+            actveOutput += `<li data-id="${activeTodos[key].id}"><span ${activeTodos[key].check ? "class='checked'" : ""}>${activeTodos[key].text}</span><i class="action-icon fa fa-trash-o" aria-hidden="true"></i>`
         }
-        for (var key in deletedTodoList) {
-            deletedOutput += `<li data-id="${deletedTodoList[key].id}"><span ${deletedTodoList[key].check ? "class='checked'" : ""}>${deletedTodoList[key].text}</span><i class="action-icon fa fa-undo" aria-hidden="true"></i>`
+        for (var key in deletedTodos) {
+            deletedOutput += `<li data-id="${deletedTodos[key].id}"><span ${deletedTodos[key].check ? "class='checked'" : ""}>${deletedTodos[key].text}</span><i class="action-icon fa fa-undo" aria-hidden="true"></i>`
         }
-        tasksCounterElement.innerHTML = activeTodoList.length + ' tasks';
-        tasksCounterElementDeleted.innerHTML = deletedTodoList.length + ' tasks';
+        tasksCounterElement.innerHTML = activeTodos.length + ' tasks';
+        tasksCounterElementDeleted.innerHTML = deletedTodos.length + ' tasks';
+        currentListName.innerHTML = currentListId;
         document.getElementById('js-active-todo-list').innerHTML = actveOutput;
         document.getElementById('js-deleted-todo-list').innerHTML = deletedOutput;
     };
     // new items output function
     function outMenuItems() {
         var actveOutput = '';
-        for (var key in todoLists) {
-            actveOutput += `<div data-id="${todoLists[key].id}"><span>${todoLists[key].name}</span></div>`
+        for (var key in lists) {
+            actveOutput += `<div class="menu-item" data-id="${lists[key].id}">${lists[key].name}</div>`
         }
         document.getElementById('js-munu').innerHTML = actveOutput;
         console.log('ef');
@@ -150,8 +151,8 @@ window.onload = function () {
 
     // localStorage update
     function localStorageUpdate() {
-        localStorage.setItem('todos', JSON.stringify(todoList));
-        localStorage.setItem('lists', JSON.stringify(todoLists));
+        localStorage.setItem('todos', JSON.stringify(todos));
+        localStorage.setItem('lists', JSON.stringify(lists));
     };
 
     // refreshState
@@ -171,4 +172,14 @@ window.onload = function () {
         document.getElementById('js-deleted-todo-list').classList.add('hidden');
     };
 
+    
+    var menuItems = document.getElementById('js-munu');
+    menuItems.addEventListener('click', function(ev) {
+        var id = ev.target.getAttribute('data-id');
+        if (ev.target.classList.contains('menu-item')) {
+            ev.target.classList.add('current');
+            currentListId = id;
+        }
+        refreshState();
+    }, false);
 };
