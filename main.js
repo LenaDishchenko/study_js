@@ -8,7 +8,6 @@ window.onload = function () {
     let selectElement = document.getElementById('date');
     selectElement.innerHTML = formatDate;
 
-    var todos = [];
     var lists = [];
     var currentListId;
 
