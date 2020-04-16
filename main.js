@@ -11,28 +11,30 @@ window.onload = function () {
     var todos = [];
     var lists = [];
     var currentListId;
+
     // items quantity output
+    let listsCounter = document.getElementById('lists-counter');
     let tasksCounterElement = document.getElementById('tasks-counter');
     let tasksCounterElementDeleted = document.getElementById('tasks-counter-deleted');
     let currentListName = document.getElementById('curren-list-name');
 
     //all items from localStorage output
-    if (localStorage.getItem('todos') != this.undefined) {
-        todos = JSON.parse(localStorage.getItem('todos'));
-        out();
-    }
-
-    //all items from localStorage output
     if (localStorage.getItem('lists') != this.undefined) {
         lists = JSON.parse(localStorage.getItem('lists'));
-        outMenuItems();
+        if (lists.length > 0) {
+            currentListId = lists[0].id;
+        }
+        refreshState();
     }
 
-    // add items to the list function
-    document.getElementById('js-add-button').onclick = function (){
+    // add tasks to the list function
+    function todoPush() {
         var inputValue = document.getElementById('js-add-input').value;
         if (inputValue != "") {
-            todos.push({
+            var currentList = lists.find(function(list) {
+                return list.id == currentListId;
+            });
+            currentList.todos.push({
                 id: Date.now(),
                 text: inputValue,
                 check: false,
@@ -46,13 +48,22 @@ window.onload = function () {
             alert('Input value is empty!');
         }
     };
+    document.querySelector('#js-add-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            todoPush();
+        }
+    });
+    document.getElementById('js-add-button').onclick = function (){
+        todoPush();
+    };
     
     // add new list function
-    document.getElementById('tasks-list-add-button').onclick = function (){
+    function listPush() {
         var inputValue = document.getElementById('tasks-list-add-input').value;
         if (inputValue != "") {
             lists.push({
                 id: Date.now(),
+                current: false,
                 name: inputValue,
                 todos: [],
             });
@@ -64,11 +75,22 @@ window.onload = function () {
         document.getElementById('tasks-list-add-input').focus();
         refreshState();
     };
+    document.querySelector('#tasks-list-add-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            listPush()
+        }
+    });
+    document.getElementById('tasks-list-add-button').onclick = function (){
+        listPush()
+    };
 
     var activeList = document.getElementById('js-active-todo-list');
     activeList.addEventListener('click', function(ev) {
         // check item
         var id = ev.target.parentNode.getAttribute('data-id');
+        var currentList = lists.find(function(list) {
+            return list.id == currentListId;
+        });
         if (ev.target.tagName === 'SPAN') {
             var toggleChecked = function (todo) {
                 if (todo.id == id) {
@@ -77,7 +99,7 @@ window.onload = function () {
                 }
                 return todo;            
             }
-            todos = todos.map(toggleChecked);
+            currentList.todos = currentList.todos.map(toggleChecked);
             refreshState();
         }
         // delete item
@@ -88,15 +110,18 @@ window.onload = function () {
                 }
                 return todo;            
             }
-            todos = todos.map(deleteItem);
+            currentList.todos = currentList.todos.map(deleteItem);
             refreshState();
         }
     }, false);
 
+    // restore item
     var deletedList = document.getElementById('js-deleted-todo-list');
     deletedList.addEventListener('click', function(ev) {
-        // restore item
         var id = ev.target.parentNode.getAttribute('data-id');
+        var currentList = lists.find(function(list) {
+            return list.id == currentListId;
+        });
         if (ev.target.classList.contains('action-icon')) {
             var restoreItem = function (todo) {
                 if (todo.id == id) {
@@ -104,64 +129,84 @@ window.onload = function () {
                 }
                 return todo;            
             }
-            todos = todos.map(restoreItem);
+            currentList.todos = currentList.todos.map(restoreItem);
             refreshState();
         }
     }, false);
-
-    // clear all list and localStorage update
+    
+    // clear all and localStorage update
     document.getElementById('js-clear-button').onclick = function (){
         localStorage.removeItem('lists');
+        document.getElementById('js-munu').innerHTML = "";
         document.getElementById('js-active-todo-list').innerHTML = "";
-        todos = [];
+        lists = [];
+        document.getElementById('js-active-todo-list').innerHTML = "no items";
+        refreshState();
+    };
+
+    // clear all list and localStorage update
+    document.getElementById('js-clear-current-list-button').onclick = function (){
+        document.getElementById('js-active-todo-list').innerHTML = "";
+        var currentList = lists.find(function(list) {
+            return list.id == currentListId;
+        });
+        currentList.todos = [];
+        refreshState();
+        document.getElementById('js-active-todo-list').innerHTML = "no items";
+    };
+    
+    // delete current list
+    document.getElementById('js-delete-current-list-button').onclick = function (){
+        lists = lists.filter(function (list) {
+            return list.id != currentListId;
+        });
+        currentListId = lists[0].id;
         refreshState();
     };
 
     // new items output function
     function out() {
-        var actveOutput = '';
-        var deletedOutput = '';
-        var activeTodos = todos.filter(function (todo) {
-            return !todo.delete;
-        });
-        var deletedTodos = todos.filter(function (todo) {
-            return todo.delete;
-        });
-        for (var key in activeTodos) {
-            actveOutput += `<li data-id="${activeTodos[key].id}"><span ${activeTodos[key].check ? "class='checked'" : ""}>${activeTodos[key].text}</span><i class="action-icon fa fa-trash-o" aria-hidden="true"></i>`
+        if (currentListId) {
+            var actveOutput = '';
+            var currentList = lists.find(function(list) {
+                return list.id == currentListId;
+            });
+            var activeTodos = currentList.todos.filter(function (todo) {
+                return !todo.delete;
+            });
+            for (var todo of activeTodos) {
+                actveOutput += `<li data-id="${todo.id}"><span ${todo.check ? "class='checked'" : ""}>${todo.text}</span><i class="action-icon fa fa-trash-o" aria-hidden="true"></i></li>`
+            }
+            var deletedOutput = '';
+            var deletedTodos = currentList.todos.filter(function (todo) {
+                return todo.delete;
+            });
+            for (var todo of deletedTodos) {
+                deletedOutput += `<li data-id="${todo.id}"><span ${todo.check ? "class='checked'" : ""}>${todo.text}</span><i class="action-icon fa fa-undo" aria-hidden="true"></i>`
+            }
+            currentListName.innerHTML = currentList.name;
+            document.getElementById('js-active-todo-list').innerHTML = actveOutput;
+            document.getElementById('js-deleted-todo-list').innerHTML = deletedOutput;
+            tasksCounterElement.innerHTML = activeTodos.length + ' current tasks';
+            tasksCounterElementDeleted.innerHTML = deletedTodos.length + ' deleted tasks';
         }
-        for (var key in deletedTodos) {
-            deletedOutput += `<li data-id="${deletedTodos[key].id}"><span ${deletedTodos[key].check ? "class='checked'" : ""}>${deletedTodos[key].text}</span><i class="action-icon fa fa-undo" aria-hidden="true"></i>`
+        else {
+            document.getElementById('js-active-todo-list').innerHTML = "no items";
         }
-        tasksCounterElement.innerHTML = activeTodos.length + ' tasks';
-        tasksCounterElementDeleted.innerHTML = deletedTodos.length + ' tasks';
-        currentListName.innerHTML = currentListId;
-        document.getElementById('js-active-todo-list').innerHTML = actveOutput;
-        document.getElementById('js-deleted-todo-list').innerHTML = deletedOutput;
+        debugger;
     };
+
     // new items output function
     function outMenuItems() {
-        var actveOutput = '';
+        var actveMenuOutput = '';
         for (var key in lists) {
-            actveOutput += `<div class="menu-item" data-id="${lists[key].id}">${lists[key].name}</div>`
+            actveMenuOutput += `<div class="menu-item" data-id="${lists[key].id}">${lists[key].name}<span>${lists[key].todos.filter(function (todo) {return !todo.delete;}).length}</span></div>`
         }
-        document.getElementById('js-munu').innerHTML = actveOutput;
-        console.log('ef');
+        listsCounter.innerHTML = lists.length + ' lists';
+        document.getElementById('js-munu').innerHTML = actveMenuOutput;
     };
 
-    // localStorage update
-    function localStorageUpdate() {
-        localStorage.setItem('todos', JSON.stringify(todos));
-        localStorage.setItem('lists', JSON.stringify(lists));
-    };
-
-    // refreshState
-    function refreshState() {
-        localStorageUpdate();
-        out();
-        outMenuItems();
-    };
-
+    
     // menu
     document.getElementById('tasks-list-deleted-button').onclick = function (){
         document.getElementById('js-deleted-todo-list').classList.remove('hidden');
@@ -171,15 +216,39 @@ window.onload = function () {
         document.getElementById('js-active-todo-list').classList.remove('hidden');
         document.getElementById('js-deleted-todo-list').classList.add('hidden');
     };
-
     
-    var menuItems = document.getElementById('js-munu');
-    menuItems.addEventListener('click', function(ev) {
+    var menu = document.getElementById('js-munu');
+    var menuItems = document.getElementById('js-munu').children;
+    menu.addEventListener('click', function(ev) {
         var id = ev.target.getAttribute('data-id');
+        var currentList = lists.find(function(list) {
+            return list.id == id;
+        });
+        for (var i=0, item; item=menuItems[i]; i++) {
+            item.classList.remove('current')
+            console.log(item);
+        }
         if (ev.target.classList.contains('menu-item')) {
             ev.target.classList.add('current');
             currentListId = id;
+            for (var i=0, item; item=lists[i]; i++) {
+                item.current = false;
+            }
+            currentList.current = true;
+            debugger;
         }
         refreshState();
     }, false);
+
+    // localStorage update
+    function localStorageUpdate() {
+        localStorage.setItem('lists', JSON.stringify(lists));
+    };
+
+    // refreshState
+    function refreshState() {
+        localStorageUpdate();
+        out();
+        outMenuItems();
+    };
 };
