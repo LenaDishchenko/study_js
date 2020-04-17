@@ -24,20 +24,42 @@ html {
 }
 
 .menu {
+    position: relative;
     width: 300px;
-    background-color: #f5f5f5;
-    padding: 16px;
+    padding: 16px 0;
+    border-right: 2px solid #e2e2e2;
+    background-color: #f5f5f56b;
+}
+
+.menu-info {
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 16px;
+    font-weight: 400;
 }
 
 .menu-item {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 8px;
     cursor: pointer;
+    padding: 0 16px;
+    height: 50px;
+    line-height: 50px;
+    border-bottom: 1px solid #f1f1f1;
 }
 
 .menu-item.current {
-    color: red;
+    background-color: #df1a3808;
+    font-weight: 400;
+    box-shadow: inset 4px 0px 0px #e52137;
+}
+
+.menu .clear-button {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
 }
 
 .content {
@@ -46,7 +68,7 @@ html {
     justify-content: stretch;
     flex: 1;
     height: 100%;
-    background-color: #f5f5f5;
+    background-color: #f5f5f56b;
 }
 
 .info-bar {
@@ -84,11 +106,11 @@ html {
     font-weight: 300;
 }
 
-.footer {
+.input-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 50px;
+    padding: 8px 16px;
 }
 
 .header-sidebar h1 {
@@ -111,9 +133,8 @@ html {
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
-    width: 840px;
     height: calc(100% - 300px);
+    padding: 0 16px;
 }
 
 .todo-list {
@@ -139,6 +160,17 @@ html {
     height: 100%;
 }
 
+.row {
+    display: flex;
+    flex: 1;
+    margin: 0 -16px;
+}
+
+.col {
+    flex: 1;
+    padding: 16px;
+}
+
 .todo-list span.checked {
     text-decoration: line-through;
     color: #ccc;
@@ -158,11 +190,12 @@ html {
     font-size: 20px;
     font-weight: 300;
     font-family: 'Roboto', sans-serif;
-    background-color: #f5f5f5;
+    background-color: transparent;
 }
 
 .clear-button {
     color: #df1a38;
+    cursor: pointer;
 }
 
 .clear-button i {
